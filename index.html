@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Social Media — Grupo Vigna</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236366f1'/%3E%3Cstop offset='1' stop-color='%238b5cf6'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='url(%23g)'/%3E%3Crect x='5' y='18' width='5' height='9' rx='1.5' fill='white' opacity='0.9'/%3E%3Crect x='13' y='11' width='5' height='16' rx='1.5' fill='white'/%3E%3Crect x='21' y='5' width='5' height='22' rx='1.5' fill='white' opacity='0.75'/%3E%3C/svg%3E">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; width: 100%; }
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #0f1117;
+  color: #e2e8f0;
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+header {
+  background: #13161f;
+  border-bottom: 1px solid #2d3748;
+  padding: 22px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.brand { display: flex; align-items: center; gap: 14px; }
+.logo {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 900; color: white;
+}
+header h1 { font-size: 20px; font-weight: 700; color: #f1f5f9; }
+header p  { font-size: 12px; color: #64748b; margin-top: 2px; }
+.header-date { text-align: right; font-size: 12px; color: #64748b; }
+.header-date strong { display: block; font-size: 14px; color: #94a3b8; }
+
+.tab-nav {
+  background: #13161f;
+  border-bottom: 1px solid #2d3748;
+  padding: 0 40px;
+  display: flex; gap: 4px; overflow-x: auto;
+}
+.tab-btn {
+  padding: 14px 20px; font-size: 13px; font-weight: 600; color: #64748b;
+  background: none; border: none; border-bottom: 2px solid transparent;
+  cursor: pointer; white-space: nowrap; transition: all .2s;
+  display: flex; align-items: center; gap: 8px;
+}
+.tab-btn:hover { color: #cbd5e1; }
+.tab-btn.active { color: #f1f5f9; border-bottom-color: var(--accent, #6366f1); }
+.tab-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent, #6366f1); }
+
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+.container { max-width: 1400px; margin: 0 auto; padding: 32px 40px; }
+
+.kpis { display: grid; gap: 18px; margin-bottom: 28px; }
+.kpis-5 { grid-template-columns: repeat(5, 1fr); }
+.kpis-4 { grid-template-columns: repeat(4, 1fr); }
+.kpis-3 { grid-template-columns: repeat(3, 1fr); }
+.kpi {
+  background: #1a1f2e; border: 1px solid #2d3748;
+  border-radius: 14px; padding: 22px; position: relative; overflow: hidden;
+}
+.kpi::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+.kpi.purple::before { background: linear-gradient(90deg,#6366f1,#8b5cf6); }
+.kpi.green::before  { background: linear-gradient(90deg,#10b981,#34d399); }
+.kpi.blue::before   { background: linear-gradient(90deg,#3b82f6,#60a5fa); }
+.kpi.orange::before { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+.kpi.pink::before   { background: linear-gradient(90deg,#ec4899,#f472b6); }
+.kpi-icon { font-size: 24px; margin-bottom: 10px; }
+.kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #64748b; }
+.kpi-value { font-size: 28px; font-weight: 800; color: #f1f5f9; margin: 5px 0; line-height: 1; }
+.kpi-sub   { font-size: 11px; color: #475569; }
+
+.section-title {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .12em; color: #6366f1; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title::after { content: ''; flex: 1; height: 1px; background: #2d3748; }
+
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 18px; margin-bottom: 22px; }
+.grid-1 { margin-bottom: 22px; }
+.grid-2 > *, .grid-3 > * { min-width: 0; }
+
+.card {
+  background: #1a1f2e; border: 1px solid #2d3748;
+  border-radius: 14px; padding: 22px; min-width: 0; overflow: hidden;
+}
+.card-title {
+  font-size: 13px; font-weight: 700; color: #cbd5e1;
+  margin-bottom: 18px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: .05em; }
+.badge-purple { background: rgba(99,102,241,.2); color: #818cf8; }
+.badge-green  { background: rgba(16,185,129,.2); color: #34d399; }
+.badge-blue   { background: rgba(59,130,246,.2); color: #60a5fa; }
+.badge-orange { background: rgba(245,158,11,.2); color: #fbbf24; }
+
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th { padding: 8px 12px; text-align: left; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: #64748b; border-bottom: 1px solid #2d3748; }
+.data-table td { padding: 10px 12px; border-bottom: 1px solid #1e2535; color: #cbd5e1; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: rgba(255,255,255,.02); }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.positive { color: #34d399; font-weight: 600; }
+.total-row td { font-weight: 700; color: #f1f5f9; border-top: 1px solid #2d3748 !important; border-bottom: none !important; }
+
+.bar-wrap { background: #0f1117; border-radius: 4px; height: 5px; margin-top: 5px; }
+.bar-fill  { height: 5px; border-radius: 4px; }
+
+.empty-state { text-align: center; padding: 80px 40px; color: #475569; }
+.empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+.empty-state h3 { font-size: 18px; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+.empty-state p  { font-size: 14px; }
+
+@media (max-width: 900px) {
+  .kpis-5, .kpis-4, .kpis-3 { grid-template-columns: 1fr 1fr; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .container { padding: 20px; }
+  .tab-nav { padding: 0 20px; }
+}
+footer { text-align: center; padding: 24px; color: #334155; font-size: 12px; border-top: 1px solid #1e2535; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">V</div>
+    <div>
+      <h1>Social Media Dashboard</h1>
+      <p>Grupo Vigna · Análise por Marca</p>
+    </div>
+  </div>
+  <div class="header-date">
+    <strong>Abril 2026</strong>
+    Período: Jan/26 – Abr/26
+  </div>
+</header>
+
+<nav class="tab-nav">
+  <button class="tab-btn active" onclick="switchTab('geral')" style="--accent:#6366f1"><span class="tab-dot" style="background:#6366f1"></span> Visão Geral</button>
+  <button class="tab-btn" onclick="switchTab('lc')" style="--accent:#6366f1"><span class="tab-dot" style="background:#6366f1"></span> Legal Control</button>
+  <button class="tab-btn" onclick="switchTab('le')" style="--accent:#10b981"><span class="tab-dot" style="background:#10b981"></span> Legal Ética</button>
+  <button class="tab-btn" onclick="switchTab('tax')" style="--accent:#3b82f6"><span class="tab-dot" style="background:#3b82f6"></span> Vigna Tax</button>
+  <button class="tab-btn" onclick="switchTab('aa')" style="--accent:#f59e0b"><span class="tab-dot" style="background:#f59e0b"></span> Vigna A.A</button>
+  <button class="tab-btn" onclick="switchTab('cc')" style="--accent:#64748b"><span class="tab-dot" style="background:#64748b"></span> Compliance Control</button>
+  <button class="tab-btn" onclick="switchTab('lh')" style="--accent:#64748b"><span class="tab-dot" style="background:#64748b"></span> Legal Hub</button>
+</nav>
+
+<!-- VISÃO GERAL -->
+<div class="tab-panel active" id="panel-geral">
+<div class="container">
+  <div class="kpis kpis-4">
+    <div class="kpi purple"><div class="kpi-icon">👥</div><div class="kpi-label">Seguidores Totais</div><div class="kpi-value">—</div><div class="kpi-sub">Todas as marcas</div></div>
+    <div class="kpi blue"><div class="kpi-icon">📣</div><div class="kpi-label">Alcance Total</div><div class="kpi-value">—</div><div class="kpi-sub">Orgânico + Pago</div></div>
+    <div class="kpi green"><div class="kpi-icon">❤️</div><div class="kpi-label">Engajamentos</div><div class="kpi-value">—</div><div class="kpi-sub">Curtidas + Comentários</div></div>
+    <div class="kpi orange"><div class="kpi-icon">📸</div><div class="kpi-label">Posts Publicados</div><div class="kpi-value">—</div><div class="kpi-sub">Feed + Stories + Reels</div></div>
+  </div>
+  <div class="section-title">Seguidores por Marca</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Crescimento de Seguidores (mensal)</div><canvas id="g-seguidores" height="230"></canvas></div>
+    <div class="card"><div class="card-title">Distribuição de Seguidores por Marca</div><canvas id="g-pizza" height="230"></canvas></div>
+  </div>
+  <div class="section-title">Engajamento Consolidado</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Alcance Mensal por Marca</div><canvas id="g-alcance" height="220"></canvas></div>
+    <div class="card"><div class="card-title">Taxa de Engajamento (%)</div><canvas id="g-taxa-eng" height="220"></canvas></div>
+  </div>
+  <div class="section-title">Resumo por Marca</div>
+  <div class="card grid-1">
+    <table class="data-table">
+      <thead><tr><th>Marca</th><th class="num">Seguidores</th><th class="num">Alcance</th><th class="num">Engajamentos</th><th class="num">Taxa Eng.</th><th class="num">Posts</th><th>Participação</th></tr></thead>
+      <tbody id="g-resumo-body"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- LEGAL CONTROL -->
+<div class="tab-panel" id="panel-lc">
+<div class="container">
+  <div class="kpis kpis-5">
+    <div class="kpi purple"><div class="kpi-icon">👥</div><div class="kpi-label">Seguidores</div><div class="kpi-value">—</div><div class="kpi-sub">Total acumulado</div></div>
+    <div class="kpi blue"><div class="kpi-icon">📣</div><div class="kpi-label">Alcance</div><div class="kpi-value">—</div><div class="kpi-sub">Último mês</div></div>
+    <div class="kpi green"><div class="kpi-icon">❤️</div><div class="kpi-label">Engajamentos</div><div class="kpi-value">—</div><div class="kpi-sub">Curtidas + Comentários</div></div>
+    <div class="kpi orange"><div class="kpi-icon">📊</div><div class="kpi-label">Taxa de Eng.</div><div class="kpi-value">—</div><div class="kpi-sub">Média do período</div></div>
+    <div class="kpi pink"><div class="kpi-icon">📸</div><div class="kpi-label">Posts</div><div class="kpi-value">—</div><div class="kpi-sub">Feed + Reels + Stories</div></div>
+  </div>
+  <div class="section-title">Crescimento</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Seguidores ao Longo do Tempo <span class="badge badge-purple">mensal</span></div><canvas id="lc-seguidores" height="240"></canvas></div>
+    <div class="card"><div class="card-title">Alcance vs Impressões</div><canvas id="lc-alcance" height="240"></canvas></div>
+  </div>
+  <div class="section-title">Engajamento</div>
+  <div class="grid-3">
+    <div class="card"><div class="card-title">Curtidas por Mês</div><canvas id="lc-curtidas" height="200"></canvas></div>
+    <div class="card"><div class="card-title">Comentários por Mês</div><canvas id="lc-comentarios" height="200"></canvas></div>
+    <div class="card"><div class="card-title">Taxa de Engajamento (%)</div><canvas id="lc-taxa" height="200"></canvas></div>
+  </div>
+  <div class="section-title">Tabela Detalhada</div>
+  <div class="card grid-1">
+    <table class="data-table">
+      <thead><tr><th>Mês</th><th class="num">Seguidores</th><th class="num">Alcance</th><th class="num">Impressões</th><th class="num">Curtidas</th><th class="num">Comentários</th><th class="num">Compartilhamentos</th><th class="num">Taxa Eng.</th><th class="num">Posts</th></tr></thead>
+      <tbody id="lc-table-body"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- LEGAL ÉTICA -->
+<div class="tab-panel" id="panel-le">
+<div class="container">
+  <div class="kpis kpis-5">
+    <div class="kpi green"><div class="kpi-icon">👥</div><div class="kpi-label">Seguidores</div><div class="kpi-value">—</div><div class="kpi-sub">Total acumulado</div></div>
+    <div class="kpi blue"><div class="kpi-icon">📣</div><div class="kpi-label">Alcance</div><div class="kpi-value">—</div><div class="kpi-sub">Último mês</div></div>
+    <div class="kpi green"><div class="kpi-icon">❤️</div><div class="kpi-label">Engajamentos</div><div class="kpi-value">—</div><div class="kpi-sub">Curtidas + Comentários</div></div>
+    <div class="kpi orange"><div class="kpi-icon">📊</div><div class="kpi-label">Taxa de Eng.</div><div class="kpi-value">—</div><div class="kpi-sub">Média do período</div></div>
+    <div class="kpi pink"><div class="kpi-icon">📸</div><div class="kpi-label">Posts</div><div class="kpi-value">—</div><div class="kpi-sub">Feed + Reels + Stories</div></div>
+  </div>
+  <div class="section-title">Crescimento</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Seguidores ao Longo do Tempo <span class="badge badge-green">mensal</span></div><canvas id="le-seguidores" height="240"></canvas></div>
+    <div class="card"><div class="card-title">Alcance vs Impressões</div><canvas id="le-alcance" height="240"></canvas></div>
+  </div>
+  <div class="section-title">Engajamento</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Curtidas e Comentários por Mês</div><canvas id="le-eng" height="200"></canvas></div>
+    <div class="card"><div class="card-title">Taxa de Engajamento (%)</div><canvas id="le-taxa" height="200"></canvas></div>
+  </div>
+  <div class="section-title">Tabela Detalhada</div>
+  <div class="card grid-1">
+    <table class="data-table">
+      <thead><tr><th>Mês</th><th class="num">Seguidores</th><th class="num">Alcance</th><th class="num">Impressões</th><th class="num">Curtidas</th><th class="num">Comentários</th><th class="num">Compartilhamentos</th><th class="num">Taxa Eng.</th><th class="num">Posts</th></tr></thead>
+      <tbody id="le-table-body"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- VIGNA TAX -->
+<div class="tab-panel" id="panel-tax">
+<div class="container">
+  <div class="kpis kpis-4">
+    <div class="kpi blue"><div class="kpi-icon">👥</div><div class="kpi-label">Seguidores</div><div class="kpi-value">—</div><div class="kpi-sub">Total acumulado</div></div>
+    <div class="kpi blue"><div class="kpi-icon">📣</div><div class="kpi-label">Alcance</div><div class="kpi-value">—</div><div class="kpi-sub">Último mês</div></div>
+    <div class="kpi green"><div class="kpi-icon">❤️</div><div class="kpi-label">Engajamentos</div><div class="kpi-value">—</div><div class="kpi-sub">Curtidas + Comentários</div></div>
+    <div class="kpi orange"><div class="kpi-icon">📸</div><div class="kpi-label">Posts</div><div class="kpi-value">—</div><div class="kpi-sub">Feed + Reels + Stories</div></div>
+  </div>
+  <div class="section-title">Crescimento e Alcance</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Seguidores ao Longo do Tempo</div><canvas id="tax-seguidores" height="240"></canvas></div>
+    <div class="card"><div class="card-title">Alcance vs Impressões</div><canvas id="tax-alcance" height="240"></canvas></div>
+  </div>
+  <div class="section-title">Tabela Detalhada</div>
+  <div class="card grid-1">
+    <table class="data-table">
+      <thead><tr><th>Mês</th><th class="num">Seguidores</th><th class="num">Alcance</th><th class="num">Impressões</th><th class="num">Curtidas</th><th class="num">Comentários</th><th class="num">Taxa Eng.</th><th class="num">Posts</th></tr></thead>
+      <tbody id="tax-table-body"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- VIGNA A.A -->
+<div class="tab-panel" id="panel-aa">
+<div class="container">
+  <div class="kpis kpis-4">
+    <div class="kpi orange"><div class="kpi-icon">👥</div><div class="kpi-label">Seguidores</div><div class="kpi-value">—</div><div class="kpi-sub">Total acumulado</div></div>
+    <div class="kpi blue"><div class="kpi-icon">📣</div><div class="kpi-label">Alcance</div><div class="kpi-value">—</div><div class="kpi-sub">Último mês</div></div>
+    <div class="kpi green"><div class="kpi-icon">❤️</div><div class="kpi-label">Engajamentos</div><div class="kpi-value">—</div><div class="kpi-sub">Curtidas + Comentários</div></div>
+    <div class="kpi orange"><div class="kpi-icon">📸</div><div class="kpi-label">Posts</div><div class="kpi-value">—</div><div class="kpi-sub">Feed + Reels + Stories</div></div>
+  </div>
+  <div class="section-title">Crescimento e Alcance</div>
+  <div class="grid-2">
+    <div class="card"><div class="card-title">Seguidores ao Longo do Tempo</div><canvas id="aa-seguidores" height="250"></canvas></div>
+    <div class="card"><div class="card-title">Alcance vs Impressões</div><canvas id="aa-alcance" height="250"></canvas></div>
+  </div>
+  <div class="section-title">Tabela Detalhada</div>
+  <div class="card grid-1">
+    <table class="data-table">
+      <thead><tr><th>Mês</th><th class="num">Seguidores</th><th class="num">Alcance</th><th class="num">Impressões</th><th class="num">Curtidas</th><th class="num">Comentários</th><th class="num">Taxa Eng.</th><th class="num">Posts</th></tr></thead>
+      <tbody id="aa-table-body"></tbody>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- COMPLIANCE -->
+<div class="tab-panel" id="panel-cc">
+<div class="container">
+  <div class="empty-state"><div class="icon">📋</div><h3>Compliance Control</h3><p>Nenhum dado de social media registrado ainda nesta marca.<br>Assim que os dados forem inseridos, aparecerão aqui automaticamente.</p></div>
+</div>
+</div>
+
+<!-- LEGAL HUB -->
+<div class="tab-panel" id="panel-lh">
+<div class="container">
+  <div class="empty-state"><div class="icon">🏛️</div><h3>Legal Hub</h3><p>Nenhum dado de social media registrado ainda nesta marca.<br>Assim que os dados forem inseridos, aparecerão aqui automaticamente.</p></div>
+</div>
+</div>
+
+<footer>Grupo Vigna · Dashboard Social Media · Abril 2026</footer>
+
+<script>
+const MESES = ['Jan/26','Fev/26','Mar/26','Abr/26'];
+
+// ── DADOS — preencher com os dados reais de cada marca ──
+const LC = [
+  {mes:'Jan/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, compartilhamentos:0, posts:0},
+  {mes:'Fev/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, compartilhamentos:0, posts:0},
+  {mes:'Mar/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, compartilhamentos:0, posts:0},
+  {mes:'Abr/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, compartilhamentos:0, posts:0},
+];
+
+const LE = [
+  {mes:'Jan/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, compartilhamentos:0, posts:0},
+  {mes:'Fev/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, compartilhamentos:0, posts:0},
+  {mes:'Mar/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, compartilhamentos:0, posts:0},
+  {mes:'Abr/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, compartilhamentos:0, posts:0},
+];
+
+const TAX = [
+  {mes:'Jan/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, posts:0},
+  {mes:'Fev/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, posts:0},
+  {mes:'Mar/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, posts:0},
+  {mes:'Abr/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, posts:0},
+];
+
+const AA = [
+  {mes:'Jan/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, posts:0},
+  {mes:'Fev/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, posts:0},
+  {mes:'Mar/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, posts:0},
+  {mes:'Abr/26', seguidores:0, alcance:0, impressoes:0, curtidas:0, comentarios:0, posts:0},
+];
+
+const fmtN = v => v > 0 ? v.toLocaleString('pt-BR') : '—';
+const fmtP = v => v > 0 ? v.toFixed(2).replace('.',',') + '%' : '—';
+const taxa = d => d.seguidores > 0 ? ((d.curtidas + d.comentarios) / d.seguidores * 100) : 0;
+
+Chart.defaults.color = '#64748b';
+Chart.defaults.borderColor = '#2d3748';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+Chart.defaults.plugins.legend.labels.usePointStyle = true;
+Chart.defaults.plugins.legend.labels.padding = 14;
+
+const gO = { y:{grid:{color:'#1e2535'}}, x:{grid:{display:false}} };
+const lineOpts = (c,ca) => ({borderColor:c,backgroundColor:ca,fill:true,tension:.4,pointBackgroundColor:c,pointRadius:4,pointHoverRadius:6});
+
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  ['geral','lc','le','tax','aa','cc','lh'].forEach((t,i) => {
+    if (t === id) document.querySelectorAll('.tab-btn')[i].classList.add('active');
+  });
+}
+
+// ── VISÃO GERAL ──
+new Chart(document.getElementById('g-seguidores'),{
+  type:'bar',
+  data:{
+    labels:MESES,
+    datasets:[
+      {label:'Legal Control', data:LC.map(d=>d.seguidores), backgroundColor:'rgba(99,102,241,.7)', borderRadius:4},
+      {label:'Legal Ética',   data:LE.map(d=>d.seguidores), backgroundColor:'rgba(16,185,129,.7)',  borderRadius:4},
+      {label:'Vigna Tax',     data:TAX.map(d=>d.seguidores),backgroundColor:'rgba(59,130,246,.7)',  borderRadius:4},
+      {label:'Vigna A.A',     data:AA.map(d=>d.seguidores), backgroundColor:'rgba(245,158,11,.7)',  borderRadius:4},
+    ]
+  },
+  options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}
+});
+
+new Chart(document.getElementById('g-pizza'),{
+  type:'doughnut',
+  data:{
+    labels:['Legal Control','Legal Ética','Vigna Tax','Vigna A.A'],
+    datasets:[{
+      data:[
+        LC[LC.length-1].seguidores,
+        LE[LE.length-1].seguidores,
+        TAX[TAX.length-1].seguidores,
+        AA[AA.length-1].seguidores
+      ],
+      backgroundColor:['rgba(99,102,241,.85)','rgba(16,185,129,.85)','rgba(59,130,246,.85)','rgba(245,158,11,.85)'],
+      borderColor:'rgba(255,255,255,0.05)',borderWidth:2
+    }]
+  },
+  options:{cutout:'65%',plugins:{legend:{position:'bottom'},tooltip:{callbacks:{label:ctx=>' '+ctx.parsed.toLocaleString('pt-BR')+' seguidores'}}}}
+});
+
+new Chart(document.getElementById('g-alcance'),{
+  type:'bar',
+  data:{labels:MESES,datasets:[
+    {label:'Legal Control',data:LC.map(d=>d.alcance),  backgroundColor:'rgba(99,102,241,.7)',borderRadius:4},
+    {label:'Legal Ética',  data:LE.map(d=>d.alcance),  backgroundColor:'rgba(16,185,129,.7)', borderRadius:4},
+    {label:'Vigna Tax',    data:TAX.map(d=>d.alcance), backgroundColor:'rgba(59,130,246,.7)', borderRadius:4},
+    {label:'Vigna A.A',    data:AA.map(d=>d.alcance),  backgroundColor:'rgba(245,158,11,.7)', borderRadius:4},
+  ]},
+  options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}
+});
+
+new Chart(document.getElementById('g-taxa-eng'),{
+  type:'line',
+  data:{labels:MESES,datasets:[
+    {label:'Legal Control',...lineOpts('rgba(99,102,241,1)','rgba(99,102,241,.08)'),data:LC.map(d=>parseFloat(taxa(d).toFixed(2)))},
+    {label:'Legal Ética',  ...lineOpts('rgba(16,185,129,1)', 'rgba(16,185,129,.08)'), data:LE.map(d=>parseFloat(taxa(d).toFixed(2)))},
+    {label:'Vigna Tax',    ...lineOpts('rgba(59,130,246,1)', 'rgba(59,130,246,.08)'), data:TAX.map(d=>parseFloat(taxa(d).toFixed(2)))},
+    {label:'Vigna A.A',    ...lineOpts('rgba(245,158,11,1)','rgba(245,158,11,.08)'),  data:AA.map(d=>parseFloat(taxa(d).toFixed(2)))},
+  ]},
+  options:{plugins:{legend:{position:'bottom'}},scales:{...gO,y:{...gO.y,ticks:{callback:v=>v+'%'}}},responsive:true}
+});
+
+const geralBody = document.getElementById('g-resumo-body');
+const resumo = [
+  {nome:'Legal Control', cor:'#6366f1', data:LC},
+  {nome:'Legal Ética',   cor:'#10b981', data:LE},
+  {nome:'Vigna Tax',     cor:'#3b82f6', data:TAX},
+  {nome:'Vigna A.A',     cor:'#f59e0b', data:AA},
+  {nome:'Compliance',    cor:'#64748b', data:null},
+  {nome:'Legal Hub',     cor:'#64748b', data:null},
+];
+const totalSeg = resumo.reduce((a,b)=>a+(b.data?b.data[b.data.length-1].seguidores:0),0);
+resumo.forEach(r=>{
+  const last = r.data ? r.data[r.data.length-1] : null;
+  const seg  = last ? last.seguidores : 0;
+  const alc  = last ? last.alcance : 0;
+  const eng  = last ? last.curtidas + last.comentarios : 0;
+  const tx   = last ? taxa(last).toFixed(2)+'%' : '—';
+  const posts= last ? last.posts : 0;
+  const pct  = totalSeg > 0 ? (seg/totalSeg*100) : 0;
+  geralBody.innerHTML+=`<tr>
+    <td style="font-weight:600;color:#f1f5f9">${r.nome}</td>
+    <td class="num">${fmtN(seg)}</td>
+    <td class="num">${fmtN(alc)}</td>
+    <td class="num">${fmtN(eng)}</td>
+    <td class="num">${tx}</td>
+    <td class="num">${posts||'—'}</td>
+    <td style="min-width:160px;padding-right:16px"><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${r.cor}"></div></div></td>
+  </tr>`;
+});
+
+// ── LEGAL CONTROL ──
+new Chart(document.getElementById('lc-seguidores'),{type:'line',data:{labels:MESES,datasets:[{label:'Seguidores',...lineOpts('rgba(99,102,241,1)','rgba(99,102,241,.1)'),data:LC.map(d=>d.seguidores)}]},options:{plugins:{legend:{display:false}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('lc-alcance'),{type:'bar',data:{labels:MESES,datasets:[{label:'Alcance',data:LC.map(d=>d.alcance),backgroundColor:'rgba(99,102,241,.5)',borderRadius:4},{label:'Impressões',data:LC.map(d=>d.impressoes),backgroundColor:'rgba(139,92,246,.3)',borderRadius:4}]},options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('lc-curtidas'),{type:'bar',data:{labels:MESES,datasets:[{label:'Curtidas',data:LC.map(d=>d.curtidas),backgroundColor:'rgba(236,72,153,.7)',borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('lc-comentarios'),{type:'bar',data:{labels:MESES,datasets:[{label:'Comentários',data:LC.map(d=>d.comentarios),backgroundColor:'rgba(99,102,241,.7)',borderRadius:4}]},options:{plugins:{legend:{display:false}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('lc-taxa'),{type:'line',data:{labels:MESES,datasets:[{label:'Taxa Eng. %',...lineOpts('rgba(251,146,60,1)','rgba(251,146,60,.1)'),data:LC.map(d=>parseFloat(taxa(d).toFixed(2)))}]},options:{plugins:{legend:{display:false}},scales:{...gO,y:{...gO.y,ticks:{callback:v=>v+'%'}}},responsive:true}});
+
+const lcBody = document.getElementById('lc-table-body');
+LC.forEach(d=>{lcBody.innerHTML+=`<tr><td>${d.mes}</td><td class="num">${fmtN(d.seguidores)}</td><td class="num">${fmtN(d.alcance)}</td><td class="num">${fmtN(d.impressoes)}</td><td class="num">${fmtN(d.curtidas)}</td><td class="num">${fmtN(d.comentarios)}</td><td class="num">${fmtN(d.compartilhamentos)}</td><td class="num">${fmtP(taxa(d))}</td><td class="num">${d.posts||'—'}</td></tr>`;});
+
+// ── LEGAL ÉTICA ──
+new Chart(document.getElementById('le-seguidores'),{type:'line',data:{labels:MESES,datasets:[{label:'Seguidores',...lineOpts('rgba(16,185,129,1)','rgba(16,185,129,.1)'),data:LE.map(d=>d.seguidores)}]},options:{plugins:{legend:{display:false}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('le-alcance'),{type:'bar',data:{labels:MESES,datasets:[{label:'Alcance',data:LE.map(d=>d.alcance),backgroundColor:'rgba(16,185,129,.5)',borderRadius:4},{label:'Impressões',data:LE.map(d=>d.impressoes),backgroundColor:'rgba(52,211,153,.3)',borderRadius:4}]},options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('le-eng'),{type:'bar',data:{labels:MESES,datasets:[{label:'Curtidas',data:LE.map(d=>d.curtidas),backgroundColor:'rgba(236,72,153,.7)',borderRadius:4},{label:'Comentários',data:LE.map(d=>d.comentarios),backgroundColor:'rgba(16,185,129,.7)',borderRadius:4}]},options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('le-taxa'),{type:'line',data:{labels:MESES,datasets:[{label:'Taxa Eng. %',...lineOpts('rgba(251,146,60,1)','rgba(251,146,60,.1)'),data:LE.map(d=>parseFloat(taxa(d).toFixed(2)))}]},options:{plugins:{legend:{display:false}},scales:{...gO,y:{...gO.y,ticks:{callback:v=>v+'%'}}},responsive:true}});
+
+const leBody = document.getElementById('le-table-body');
+LE.forEach(d=>{leBody.innerHTML+=`<tr><td>${d.mes}</td><td class="num">${fmtN(d.seguidores)}</td><td class="num">${fmtN(d.alcance)}</td><td class="num">${fmtN(d.impressoes)}</td><td class="num">${fmtN(d.curtidas)}</td><td class="num">${fmtN(d.comentarios)}</td><td class="num">${fmtN(d.compartilhamentos)}</td><td class="num">${fmtP(taxa(d))}</td><td class="num">${d.posts||'—'}</td></tr>`;});
+
+// ── VIGNA TAX ──
+new Chart(document.getElementById('tax-seguidores'),{type:'line',data:{labels:MESES,datasets:[{label:'Seguidores',...lineOpts('rgba(59,130,246,1)','rgba(59,130,246,.1)'),data:TAX.map(d=>d.seguidores)}]},options:{plugins:{legend:{display:false}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('tax-alcance'),{type:'bar',data:{labels:MESES,datasets:[{label:'Alcance',data:TAX.map(d=>d.alcance),backgroundColor:'rgba(59,130,246,.5)',borderRadius:4},{label:'Impressões',data:TAX.map(d=>d.impressoes),backgroundColor:'rgba(99,102,241,.3)',borderRadius:4}]},options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}});
+
+const taxBody = document.getElementById('tax-table-body');
+TAX.forEach(d=>{taxBody.innerHTML+=`<tr><td>${d.mes}</td><td class="num">${fmtN(d.seguidores)}</td><td class="num">${fmtN(d.alcance)}</td><td class="num">${fmtN(d.impressoes)}</td><td class="num">${fmtN(d.curtidas)}</td><td class="num">${fmtN(d.comentarios)}</td><td class="num">${fmtP(taxa(d))}</td><td class="num">${d.posts||'—'}</td></tr>`;});
+
+// ── VIGNA A.A ──
+new Chart(document.getElementById('aa-seguidores'),{type:'line',data:{labels:MESES,datasets:[{label:'Seguidores',...lineOpts('rgba(245,158,11,1)','rgba(245,158,11,.1)'),data:AA.map(d=>d.seguidores)}]},options:{plugins:{legend:{display:false}},scales:{...gO},responsive:true}});
+new Chart(document.getElementById('aa-alcance'),{type:'bar',data:{labels:MESES,datasets:[{label:'Alcance',data:AA.map(d=>d.alcance),backgroundColor:'rgba(245,158,11,.5)',borderRadius:4},{label:'Impressões',data:AA.map(d=>d.impressoes),backgroundColor:'rgba(251,191,36,.3)',borderRadius:4}]},options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}});
+
+const aaBody = document.getElementById('aa-table-body');
+AA.forEach(d=>{aaBody.innerHTML+=`<tr><td>${d.mes}</td><td class="num">${fmtN(d.seguidores)}</td><td class="num">${fmtN(d.alcance)}</td><td class="num">${fmtN(d.impressoes)}</td><td class="num">${fmtN(d.curtidas)}</td><td class="num">${fmtN(d.comentarios)}</td><td class="num">${fmtP(taxa(d))}</td><td class="num">${d.posts||'—'}</td></tr>`;});
+</script>
+</body>
+</html>
