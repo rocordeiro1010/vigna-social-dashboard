@@ -129,52 +129,13 @@ footer { text-align: center; padding: 24px; color: #334155; font-size: 12px; bor
 </header>
 
 <nav class="tab-nav">
-  <button class="tab-btn active" onclick="switchTab('geral')" style="--accent:#6366f1"><span class="tab-dot" style="background:#6366f1"></span> Visão Geral</button>
+  <button class="tab-btn active" onclick="switchTab('aa')" style="--accent:#f59e0b"><span class="tab-dot" style="background:#f59e0b"></span> Vigna A.A</button>
+  <button class="tab-btn" onclick="switchTab('tax')" style="--accent:#3b82f6"><span class="tab-dot" style="background:#3b82f6"></span> Vigna Tax</button>
   <button class="tab-btn" onclick="switchTab('lc')" style="--accent:#6366f1"><span class="tab-dot" style="background:#6366f1"></span> Legal Control</button>
   <button class="tab-btn" onclick="switchTab('le')" style="--accent:#10b981"><span class="tab-dot" style="background:#10b981"></span> Legal Ética</button>
-  <button class="tab-btn" onclick="switchTab('tax')" style="--accent:#3b82f6"><span class="tab-dot" style="background:#3b82f6"></span> Vigna Tax</button>
-  <button class="tab-btn" onclick="switchTab('aa')" style="--accent:#f59e0b"><span class="tab-dot" style="background:#f59e0b"></span> Vigna A.A</button>
   <button class="tab-btn" onclick="switchTab('cc')" style="--accent:#64748b"><span class="tab-dot" style="background:#64748b"></span> Compliance Control</button>
   <button class="tab-btn" onclick="switchTab('lh')" style="--accent:#64748b"><span class="tab-dot" style="background:#64748b"></span> Legal Hub</button>
 </nav>
-
-<!-- VISÃO GERAL -->
-<div class="tab-panel active" id="panel-geral">
-<div class="container">
-  <div class="kpis kpis-4">
-    <div class="kpi pink"><div class="kpi-icon">📸</div><div class="kpi-label">Seguidores Instagram</div><div class="kpi-value">26.451</div><div class="kpi-sub">LC + LE + TAX + AA · Jan/26</div></div>
-    <div class="kpi blue"><div class="kpi-icon">💼</div><div class="kpi-label">Seguidores LinkedIn</div><div class="kpi-value">52.138</div><div class="kpi-sub">LC + LE + TAX + AA · Jan/26</div></div>
-    <div class="kpi purple"><div class="kpi-icon">📣</div><div class="kpi-label">Alcance IG (Jan/26)</div><div class="kpi-value">18.456</div><div class="kpi-sub">Soma todas as marcas</div></div>
-    <div class="kpi green"><div class="kpi-icon">❤️</div><div class="kpi-label">Engajamentos IG (Jan/26)</div><div class="kpi-value">1.456</div><div class="kpi-sub">Soma todas as marcas</div></div>
-  </div>
-
-  <div class="section-title">Instagram — Crescimento de Seguidores</div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">Seguidores Instagram por Marca <span class="badge badge-ig">mensal</span></div><canvas id="g-ig-seg" height="230"></canvas></div>
-    <div class="card"><div class="card-title">Distribuição Seguidores Instagram (Jan/26)</div><canvas id="g-ig-pizza" height="230"></canvas></div>
-  </div>
-
-  <div class="section-title li">LinkedIn — Crescimento de Seguidores</div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">Seguidores LinkedIn por Marca <span class="badge badge-li">mensal</span></div><canvas id="g-li-seg" height="230"></canvas></div>
-    <div class="card"><div class="card-title">Distribuição Seguidores LinkedIn (Jan/26)</div><canvas id="g-li-pizza" height="230"></canvas></div>
-  </div>
-
-  <div class="section-title">Engajamento Instagram por Marca</div>
-  <div class="grid-2">
-    <div class="card"><div class="card-title">Engajamentos IG por Mês</div><canvas id="g-ig-eng" height="230"></canvas></div>
-    <div class="card"><div class="card-title">Taxa de Engajamento IG (%)</div><canvas id="g-ig-taxa" height="230"></canvas></div>
-  </div>
-
-  <div class="section-title">Resumo por Marca (Jan/26)</div>
-  <div class="card grid-1">
-    <table class="data-table">
-      <thead><tr><th>Marca</th><th class="num">Seg. IG</th><th class="num">Alcance IG</th><th class="num">Eng. IG</th><th class="num">Taxa IG</th><th class="num">Seg. LI</th><th class="num">Alcance LI</th><th class="num">Eng. LI</th><th>Part. IG</th></tr></thead>
-      <tbody id="g-resumo-body"></tbody>
-    </table>
-  </div>
-</div>
-</div>
 
 <!-- LEGAL CONTROL -->
 <div class="tab-panel" id="panel-lc">
@@ -321,7 +282,7 @@ footer { text-align: center; padding: 24px; color: #334155; font-size: 12px; bor
 </div>
 
 <!-- VIGNA A.A -->
-<div class="tab-panel" id="panel-aa">
+<div class="tab-panel active" id="panel-aa">
 <div class="container">
   <div class="section-title">Instagram <span class="badge badge-ig" style="margin-left:6px">@vignaaa</span></div>
   <div class="kpis kpis-4">
@@ -528,7 +489,7 @@ function switchTab(id) {
   document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('panel-'+id).classList.add('active');
-  ['geral','lc','le','tax','aa','cc','lh'].forEach((t,i)=>{
+  ['aa','tax','lc','le','cc','lh'].forEach((t,i)=>{
     if(t===id) document.querySelectorAll('.tab-btn')[i].classList.add('active');
   });
 }
@@ -558,66 +519,6 @@ function liTable(tbodyId, data) {
     el.innerHTML+=`<tr><td>${d.mes}</td><td class="num">${fmtN(d.seg)}</td><td class="num">${fmtN(d.alcance)}</td><td class="num">${fmtN(d.vis)}</td><td class="num">${fmtN(d.eng)}</td><td class="num">${fmtP(d.taxa)}</td><td class="num">${d.posts||'—'}</td></tr>`;
   });
 }
-
-// ── VISÃO GERAL ──
-mkBar('g-ig-seg',[
-  {label:'Legal Control',data:LC_IG.map(d=>d.seg),backgroundColor:'rgba(99,102,241,.7)',borderRadius:4},
-  {label:'Legal Ética',  data:LE_IG.map(d=>d.seg),backgroundColor:'rgba(16,185,129,.7)',borderRadius:4},
-  {label:'Vigna Tax',    data:TAX_IG.map(d=>d.seg),backgroundColor:'rgba(59,130,246,.7)',borderRadius:4},
-  {label:'Vigna A.A',   data:AA_IG.map(d=>d.seg),backgroundColor:'rgba(245,158,11,.7)',borderRadius:4},
-]);
-mkDoughnut('g-ig-pizza',
-  ['Legal Control','Legal Ética','Vigna Tax','Vigna A.A'],
-  [4415,4835,5748,11453],
-  ['rgba(99,102,241,.85)','rgba(16,185,129,.85)','rgba(59,130,246,.85)','rgba(245,158,11,.85)']
-);
-mkLine('g-li-seg',[
-  {label:'Legal Control',...lO('rgba(99,102,241,1)','rgba(99,102,241,.08)'),data:LC_LI.map(d=>d.seg)},
-  {label:'Legal Ética',  ...lO('rgba(16,185,129,1)','rgba(16,185,129,.08)'),data:LE_LI.map(d=>d.seg)},
-  {label:'Vigna Tax',    ...lO('rgba(59,130,246,1)','rgba(59,130,246,.08)'),data:TAX_LI.map(d=>d.seg)},
-  {label:'Vigna A.A',   ...lO('rgba(245,158,11,1)','rgba(245,158,11,.08)'),data:AA_LI.map(d=>d.seg)},
-]);
-mkDoughnut('g-li-pizza',
-  ['Legal Control','Legal Ética','Vigna Tax','Vigna A.A'],
-  [1579,316,998,49245],
-  ['rgba(99,102,241,.85)','rgba(16,185,129,.85)','rgba(59,130,246,.85)','rgba(245,158,11,.85)']
-);
-mkBar('g-ig-eng',[
-  {label:'Legal Control',data:LC_IG.map(d=>d.eng),backgroundColor:'rgba(99,102,241,.7)',borderRadius:4},
-  {label:'Legal Ética',  data:LE_IG.map(d=>d.eng),backgroundColor:'rgba(16,185,129,.7)',borderRadius:4},
-  {label:'Vigna Tax',    data:TAX_IG.map(d=>d.eng),backgroundColor:'rgba(59,130,246,.7)',borderRadius:4},
-  {label:'Vigna A.A',   data:AA_IG.map(d=>d.eng),backgroundColor:'rgba(245,158,11,.7)',borderRadius:4},
-]);
-mkLine('g-ig-taxa',[
-  {label:'Legal Control',...lO('rgba(99,102,241,1)','rgba(99,102,241,.06)'),data:LC_IG.map(d=>d.taxa)},
-  {label:'Legal Ética',  ...lO('rgba(16,185,129,1)','rgba(16,185,129,.06)'),data:LE_IG.map(d=>d.taxa)},
-  {label:'Vigna Tax',    ...lO('rgba(59,130,246,1)','rgba(59,130,246,.06)'),data:TAX_IG.map(d=>d.taxa)},
-  {label:'Vigna A.A',   ...lO('rgba(245,158,11,1)','rgba(245,158,11,.06)'),data:AA_IG.map(d=>d.taxa)},
-],{y:{...gO.y,ticks:{callback:v=>v+'%'}}});
-
-// Resumo table
-const totalSeg = 4415+4835+5748+11453;
-const resumo = [
-  {nome:'Legal Control',cor:'#6366f1',ig:LC_IG[12],li:LC_LI[12]},
-  {nome:'Legal Ética',  cor:'#10b981',ig:LE_IG[12],li:LE_LI[12]},
-  {nome:'Vigna Tax',    cor:'#3b82f6',ig:TAX_IG[12],li:TAX_LI[12]},
-  {nome:'Vigna A.A',   cor:'#f59e0b',ig:AA_IG[12],li:AA_LI[12]},
-];
-const tbody = document.getElementById('g-resumo-body');
-resumo.forEach(r=>{
-  const pct = (r.ig.seg/totalSeg*100);
-  tbody.innerHTML+=`<tr>
-    <td style="font-weight:600;color:#f1f5f9">${r.nome}</td>
-    <td class="num">${fmtN(r.ig.seg)}</td>
-    <td class="num">${fmtN(r.ig.alcance)}</td>
-    <td class="num">${fmtN(r.ig.eng)}</td>
-    <td class="num">${fmtP(r.ig.taxa)}</td>
-    <td class="num positive">${fmtN(r.li.seg)}</td>
-    <td class="num">${fmtN(r.li.alcance)}</td>
-    <td class="num">${fmtN(r.li.eng)}</td>
-    <td style="min-width:140px;padding-right:16px"><div class="bar-wrap"><div class="bar-fill" style="width:${pct}%;background:${r.cor}"></div></div></td>
-  </tr>`;
-});
 
 // ── LEGAL CONTROL ──
 mkLine('lc-ig-seg',[{label:'Seguidores',...lO('rgba(99,102,241,1)','rgba(99,102,241,.12)'),data:LC_IG.map(d=>d.seg)}],{y:{...gO.y}});
