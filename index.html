@@ -658,7 +658,7 @@ liTable('lc-li-table',LC_LI);
 // ── LEGAL ÉTICA ──
 const leIgAtivos = LE_IG.filter(d=>d.seg>0);
 const leIgM = leIgAtivos.map(d=>d.mes);
-mkLine('le-ig-seg',[{label:'Seguidores',...lO('rgba(16,185,129,1)','rgba(16,185,129,.12)'),data:leIgAtivos.map(d=>d.seg)}]);
+new Chart(document.getElementById('le-ig-seg'),{type:'line',data:{labels:leIgM,datasets:[{label:'Seguidores',...lO('rgba(16,185,129,1)','rgba(16,185,129,.12)'),data:leIgAtivos.map(d=>d.seg)}]},options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}});
 new Chart(document.getElementById('le-ig-alcance'),{type:'bar',data:{labels:leIgM,datasets:[
   {label:'Alcance',data:leIgAtivos.map(d=>d.alcance),backgroundColor:'rgba(16,185,129,.5)',borderRadius:4},
   {label:'Impressões',data:leIgAtivos.map(d=>d.imp),backgroundColor:'rgba(52,211,153,.25)',borderRadius:4},
