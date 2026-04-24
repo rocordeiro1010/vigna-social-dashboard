@@ -128,6 +128,38 @@ footer { text-align: center; padding: 24px; color: #334155; font-size: 12px; bor
 .tab-panel.active .container{animation:tabFade .35s ease forwards;}
 @keyframes kpiIn{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
 .kpi-in{animation:kpiIn .4s ease forwards;opacity:0;}
+
+/* ── THEME TOGGLE ── */
+#theme-btn{background:none;border:1px solid #2d3748;border-radius:50px;padding:6px 14px;cursor:pointer;font-size:13px;color:#94a3b8;display:flex;align-items:center;gap:6px;transition:all .2s;white-space:nowrap;}
+#theme-btn:hover{border-color:#64748b;color:#f1f5f9;}
+
+/* ── LIGHT MODE ── */
+body.light{background:#f1f5f9;color:#0f172a;}
+body.light header{background:#ffffff;border-color:#e2e8f0;}
+body.light header h1{color:#0f172a;}
+body.light header p{color:#64748b;}
+body.light .header-date{color:#64748b;}
+body.light .header-date strong{color:#374151;}
+body.light .tab-nav{background:#ffffff;border-color:#e2e8f0;}
+body.light .tab-btn{color:#64748b;}
+body.light .tab-btn:hover{color:#0f172a;}
+body.light .tab-btn.active{color:#0f172a;}
+body.light .kpi{background:#ffffff;border-color:#e2e8f0;}
+body.light .kpi-value{color:#0f172a;}
+body.light .kpi-label{color:#64748b;}
+body.light .kpi-sub{color:#94a3b8;}
+body.light .card{background:#ffffff;border-color:#e2e8f0;}
+body.light .card:hover{border-color:#cbd5e1;}
+body.light .card-title{color:#374151;}
+body.light .section-title{color:#374151;}
+body.light .section-title.li{color:#0ea5e9;}
+body.light .data-table th{color:#64748b;border-color:#e2e8f0;}
+body.light .data-table td{color:#374151;border-color:#f1f5f9;}
+body.light .data-table .total-row td{color:#0f172a;background:rgba(99,102,241,.06);}
+body.light .bar-wrap{background:#e2e8f0;}
+body.light footer{color:#94a3b8;border-color:#e2e8f0;}
+body.light #theme-btn{border-color:#e2e8f0;color:#64748b;}
+body.light #theme-btn:hover{border-color:#94a3b8;color:#0f172a;}
 </style>
 </head>
 <body>
@@ -140,9 +172,12 @@ footer { text-align: center; padding: 24px; color: #334155; font-size: 12px; bor
       <p>Grupo Vigna · Instagram &amp; LinkedIn por Marca</p>
     </div>
   </div>
-  <div class="header-date">
-    <strong>Mar/2026</strong>
-    Período: Jan/25 – Mar/26
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="header-date">
+      <strong>Mar/2026</strong>
+      Período: Jan/25 – Mar/26
+    </div>
+    <button id="theme-btn" onclick="toggleTheme()">🌙 Dark</button>
   </div>
 </header>
 
@@ -719,6 +754,35 @@ new Chart(document.getElementById('cc-li-seg'),{type:'line',data:{labels:ccLiM,d
 new Chart(document.getElementById('cc-li-alcance'),{type:'bar',data:{labels:ccLiM,datasets:[{label:'Alcance',data:CC_LI.map(d=>d.alcance),backgroundColor:'rgba(14,165,233,.5)',borderRadius:4},{label:'Engajamentos',data:CC_LI.map(d=>d.eng),backgroundColor:'rgba(56,189,248,.8)',borderRadius:4}]},options:{plugins:{legend:{position:'bottom'}},scales:{...gO},responsive:true}});
 igTable('cc-ig-table',CC_IG);
 liTable('cc-li-table',CC_LI);
+
+// ── THEME TOGGLE ──
+function applyTheme(light) {
+  document.body.classList.toggle('light', light);
+  const btn = document.getElementById('theme-btn');
+  btn.textContent = light ? '🌙 Dark' : '☀️ Light';
+  const grid = light ? '#e2e8f0' : '#1e2535';
+  const txt  = light ? '#94a3b8' : '#64748b';
+  Object.values(Chart.instances).forEach(c => {
+    ['x','y','y1'].forEach(ax => {
+      if (c.options.scales?.[ax]) {
+        c.options.scales[ax].grid = {...(c.options.scales[ax].grid||{}), color: grid};
+        c.options.scales[ax].ticks = {...(c.options.scales[ax].ticks||{}), color: txt};
+      }
+    });
+    if (c.options.plugins?.legend?.labels) c.options.plugins.legend.labels.color = txt;
+    c.update('none');
+  });
+}
+function toggleTheme() {
+  const isLight = !document.body.classList.contains('light');
+  localStorage.setItem('vigna-theme', isLight ? 'light' : 'dark');
+  applyTheme(isLight);
+}
+// Load saved preference
+(function(){
+  const saved = localStorage.getItem('vigna-theme');
+  if (saved === 'light') applyTheme(true);
+})();
 </script>
 </body>
 </html>
