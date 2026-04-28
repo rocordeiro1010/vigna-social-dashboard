@@ -27,6 +27,7 @@ header {
 }
 header h1 { font-size: 20px; font-weight: 700; color: #f1f5f9; }
 header p  { font-size: 12px; color: #64748b; margin-top: 2px; }
+.header-right { display: flex; align-items: center; gap: 16px; }
 .header-date { text-align: right; font-size: 12px; color: #64748b; }
 .header-date strong { display: block; font-size: 14px; color: #94a3b8; }
 .tab-nav {
@@ -54,11 +55,14 @@ header p  { font-size: 12px; color: #64748b; margin-top: 2px; }
   border-radius: 14px; padding: 22px; position: relative; overflow: hidden;
 }
 .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
-.kpi.purple::before { background: linear-gradient(90deg,#6366f1,#8b5cf6); }
-.kpi.green::before  { background: linear-gradient(90deg,#10b981,#34d399); }
-.kpi.blue::before   { background: linear-gradient(90deg,#3b82f6,#60a5fa); }
-.kpi.orange::before { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
-.kpi.pink::before   { background: linear-gradient(90deg,#ec4899,#f472b6); }
+.kpi.purple::before   { background: linear-gradient(90deg,#6366f1,#8b5cf6); }
+.kpi.green::before    { background: linear-gradient(90deg,#10b981,#34d399); }
+.kpi.blue::before     { background: linear-gradient(90deg,#3b82f6,#60a5fa); }
+.kpi.orange::before   { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+.kpi.pink::before     { background: linear-gradient(90deg,#ec4899,#f472b6); }
+.kpi.red::before      { background: linear-gradient(90deg,#ef4444,#f87171); }
+.kpi.yellow::before   { background: linear-gradient(90deg,#eab308,#facc15); }
+.kpi.darkblue::before { background: linear-gradient(90deg,#1d4ed8,#3b82f6); }
 .kpi-icon { font-size: 24px; margin-bottom: 10px; }
 .kpi-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: #64748b; }
 .kpi-value { font-size: 28px; font-weight: 800; color: #f1f5f9; margin: 5px 0; line-height: 1; }
@@ -151,7 +155,7 @@ body.light .kpi-sub{color:#94a3b8;}
 body.light .card{background:#ffffff;border-color:#e2e8f0;}
 body.light .card:hover{border-color:#cbd5e1;}
 body.light .card-title{color:#374151;}
-body.light .section-title{color:#374151;}
+body.light .section-title::after{background:#e2e8f0;}
 body.light .section-title.li{color:#0ea5e9;}
 body.light .data-table th{color:#64748b;border-color:#e2e8f0;}
 body.light .data-table td{color:#374151;border-color:#f1f5f9;}
@@ -172,7 +176,7 @@ body.light #theme-btn:hover{border-color:#94a3b8;color:#0f172a;}
       <p>Grupo Vigna · Instagram &amp; LinkedIn por Marca</p>
     </div>
   </div>
-  <div style="display:flex;align-items:center;gap:16px;">
+  <div class="header-right">
     <div class="header-date">
       <strong>Mar/2026</strong>
       Período: Jan/25 – Mar/26
