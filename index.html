@@ -969,11 +969,17 @@ function renderPeriodChips() {
   ).join('');
 }
 
+function updateScrollBtns() {
+  const show = activeGran === 'mensal';
+  document.querySelectorAll('.chips-scroll-btn').forEach(b => b.style.display = show ? '' : 'none');
+}
+
 function setGran(g) {
   if (g === activeGran) return;
   activeGran = g; activePeriod = 'todos';
   document.querySelectorAll('.gran-btn').forEach(b => b.classList.toggle('active', b.id === 'gb-'+g));
   renderPeriodChips();
+  updateScrollBtns();
   renderCharts();
   renderAllTables();
   updateAllKPIs();
@@ -1055,6 +1061,7 @@ function toggleTheme() {
 // INIT
 // ══════════════════════════════════════════════
 renderPeriodChips();
+updateScrollBtns();
 renderCharts();
 renderAllTables();
 updateAllKPIs();
