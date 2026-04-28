@@ -27,9 +27,12 @@ header p  { font-size: 12px; color: #64748b; margin-top: 2px; }
 .ctrl-bar { background: #13161f; border-bottom: 1px solid #2d3748; padding: 10px 40px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .period-section { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; overflow: hidden; }
 .ctrl-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #64748b; white-space: nowrap; }
-.chips-wrap { position: relative; flex: 1; min-width: 0; overflow: hidden; }
-.chips-wrap::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 48px; background: linear-gradient(to right, transparent, #13161f); pointer-events: none; }
-.period-chips { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; padding-right: 48px; }
+.chips-wrap { position: relative; flex: 1; min-width: 0; display: flex; align-items: center; gap: 4px; }
+.chips-scroll-btn { flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%; background: #1e2535; border: 1px solid #374151; color: #94a3b8; font-size: 15px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .18s; padding: 0; }
+.chips-scroll-btn:hover { background: #2d3748; color: #f1f5f9; border-color: #64748b; }
+.chips-inner { position: relative; flex: 1; min-width: 0; overflow: hidden; }
+.chips-inner::after { content: ''; position: absolute; right: 0; top: 0; bottom: 0; width: 32px; background: linear-gradient(to right, transparent, #13161f); pointer-events: none; }
+.period-chips { display: flex; gap: 5px; overflow-x: auto; scrollbar-width: none; }
 .period-chips::-webkit-scrollbar { display: none; }
 .period-chip { padding: 4px 14px; font-size: 12px; font-weight: 600; border: 1px solid #2d3748; border-radius: 20px; background: none; color: #64748b; cursor: pointer; transition: all .18s; white-space: nowrap; flex-shrink: 0; }
 .period-chip:hover { color: #cbd5e1; border-color: #475569; }
@@ -144,7 +147,9 @@ footer { text-align: center; padding: 24px; color: #334155; font-size: 12px; bor
 /* ── LIGHT MODE ── */
 body.light { background: #f1f5f9; color: #0f172a; }
 body.light header, body.light .ctrl-bar, body.light .tab-nav { background: #fff; border-color: #e2e8f0; }
-body.light .chips-wrap::after { background: linear-gradient(to right, transparent, #fff); }
+body.light .chips-inner::after { background: linear-gradient(to right, transparent, #fff); }
+body.light .chips-scroll-btn { background: #f1f5f9; border-color: #e2e8f0; color: #64748b; }
+body.light .chips-scroll-btn:hover { background: #e2e8f0; color: #0f172a; }
 body.light header h1 { color: #0f172a; }
 body.light header p, body.light .header-date { color: #64748b; }
 body.light .header-date strong { color: #374151; }
@@ -192,7 +197,11 @@ body.light #theme-btn:hover { border-color: #94a3b8; color: #0f172a; }
   <div class="period-section">
     <span class="ctrl-label">Período</span>
     <div class="chips-wrap">
-      <div class="period-chips" id="period-chips"></div>
+      <button class="chips-scroll-btn" onclick="scrollChips(-1)" title="Anterior">‹</button>
+      <div class="chips-inner">
+        <div class="period-chips" id="period-chips"></div>
+      </div>
+      <button class="chips-scroll-btn" onclick="scrollChips(1)" title="Próximo">›</button>
     </div>
   </div>
   <div class="gran-section">
@@ -947,6 +956,11 @@ function renderAllTables() {
 // CONTROLS
 // ══════════════════════════════════════════════
 let activeGran = 'mensal', activePeriod = 'todos';
+
+function scrollChips(dir) {
+  const el = document.getElementById('period-chips');
+  el.scrollBy({ left: dir * 180, behavior: 'smooth' });
+}
 
 function renderPeriodChips() {
   const chips = document.getElementById('period-chips');
